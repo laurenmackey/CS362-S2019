@@ -685,7 +685,6 @@ int playAdventurer(struct gameState *state, int currentPlayer)
     z=z-1;
   }
   
-  printf("Played in the function\n");
   return 0;
 }
 
