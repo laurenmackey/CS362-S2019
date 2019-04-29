@@ -1,11 +1,11 @@
-/**************************************************************************
+/**********************************************************************************
 * Unit test for the playAdventurer refactored function in dominion.c
-* Source: Some help from assignment 3 assistance (2) code
+* Sources: assignment 3 assistance (2) code, cardtest4.c provided code
 * To run, makefile should include:
 * playAdventurerTest: unittest1.c dominion.o rngs.o
 *     gcc -o playAdventurerTest -g unittest1.c dominion.o rngs.o $(CFLAGS)
 * (where CFLAGS must equal -fprofile-arcs -ftest-coverage)
-***************************************************************************/
+***********************************************************************************/
 
 #include "dominion.h"
 #include "dominion_helpers.h"
@@ -22,12 +22,13 @@ int main()
     // declare variables
     int seed = 1000;
     int numPlayers = 2;
-    int cards[10] = {adventurer, gardens, embargo, village, minion, mine, cutpurse,
+    int cards[10] = {adventurer, outpost, salvager, village, minion, mine, cutpurse,
            sea_hag, estate, smithy};
     struct gameState state;
     int deckSize = 10;
     int handSize = 5;
     int i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
+    int numHandPre[2] = {0, 0};
     int numTreasurePre[2] = {0, 0};
     int numTreasurePost[2] = {0, 0};
     int numDiscard[2] = {0, 0};
@@ -35,6 +36,8 @@ int main()
     // initialize the game
     memset(&state, 23, sizeof(struct gameState));
     initializeGame(numPlayers, cards, seed, &state);
+
+    printf("\n*********** Testing Adventurer Card Function ***********\n\n");
 
     // manually reset the deck to have 2 treasure only
     for (i = 0; i < numPlayers; i++)
@@ -86,6 +89,10 @@ int main()
         }
     }
 
+    // get number of total cards in hand before play
+    numHandPre[0] = state.handCount[0];
+    numHandPre[1] = state.handCount[1];
+
     // get number of treasure cards in hand before play
     for (p = 0; p < numPlayers; p++) 
     {
@@ -135,11 +142,23 @@ int main()
     if (MYDEBUG)
         printf("\n\nPost treasure for player 1 is: %d\nPost treasure for player 2 is: %d\n\n", numTreasurePost[0], numTreasurePost[1]);
 
-    // at end, hand should have +2 treasure cards
+    // after play, hand should have increased by 2 cards overall
+    printf("Test 1: +2 cards in hand for each player\n");
+    printf("Expected player 1 hand count: %d, Actual player 1 hand count: %d\n", numHandPre[0] + 2, state.handCount[0]);
+    printf("Expected player 2 hand count: %d, Actual player 2 hand count: %d\n\n", numHandPre[1] + 2, state.handCount[1]);
+    assert(state.handCount[0] == numHandPre[0] + 2);
+    assert(state.handCount[1] == numHandPre[1] + 2);
+    printf("Test 1: PASS\n\n");
+
+    // after play, hand should have +2 treasure cards
+    printf("Test 2: +2 treasure cards in hand for each player\n");
+    printf("Expected player 1 treasure count: %d, Actual player 1 treasure count: %d\n", numTreasurePre[0] + 2, numTreasurePost[0]);
+    printf("Expected player 2 treasure count: %d, Actual player 2 treasure count: %d\n\n", numTreasurePre[1] + 2, numTreasurePost[1]);
     assert(numTreasurePost[0] == numTreasurePre[0] + 2);
     assert(numTreasurePost[1] == numTreasurePre[1] + 2);
+    printf("Test 2: PASS\n\n");
 
-    // at end, anything before treasure cards should be in discard pile
+    // get number of cards that will need to be discarded for each player before play
     for (w = 0; w < numPlayers; w++)
     {
         int startPos = deckSize - state.handCount[w];
@@ -156,6 +175,8 @@ int main()
     if (MYDEBUG)
         printf("Num discard for player 1 is: %d\nNum discard for player 2 is: %d\n", numDiscard[0], numDiscard[1]);
 
+    // after play, anything before treasure cards should be in discard pile
+    printf("Test 3: All cards in deck before treasure cards now in discard pile\n");
     for (y = 0; y < numPlayers; y++)
     {
         for (z = 0; z < numDiscard[y]; z++)
@@ -163,6 +184,9 @@ int main()
             assert(state.discard[y][z] == estate);
         }
     }
+    printf("Test 3: PASS\n\n");
 
-    printf("All tests passed!\n");
+    printf("Adventurer Card Function: all tests passed!\n\n");
+
+    return 0;
 }
