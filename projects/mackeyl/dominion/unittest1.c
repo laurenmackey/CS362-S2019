@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include "rngs.h"
 
-#define MYDEBUG 1
+#define MYDEBUG 0
 
 int main()
 {
@@ -27,7 +27,7 @@ int main()
     struct gameState state;
     int deckSize = 10;
     int handSize = 5;
-    int i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x;
+    int i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
     int numTreasurePre[2] = {0, 0};
     int numTreasurePost[2] = {0, 0};
     int numDiscard[2] = {0, 0};
@@ -136,11 +136,10 @@ int main()
         printf("\n\nPost treasure for player 1 is: %d\nPost treasure for player 2 is: %d\n\n", numTreasurePost[0], numTreasurePost[1]);
 
     // at end, hand should have +2 treasure cards
-    //assert(numTreasurePost[0] == numTreasurePre[0] + 2);
-    //assert(numTreasurePost[1] == numTreasurePre[1] + 2);
+    assert(numTreasurePost[0] == numTreasurePre[0] + 2);
+    assert(numTreasurePost[1] == numTreasurePre[1] + 2);
 
     // at end, anything before treasure cards should be in discard pile
-    // loop through initial deck and see how many cards there were before treasure card shows up
     for (w = 0; w < numPlayers; w++)
     {
         int startPos = deckSize - state.handCount[w];
@@ -154,9 +153,16 @@ int main()
         }
     }
 
-    printf("Num discard for player 1 is: %d\nNum discard for player 2 is: %d\n", numDiscard[0], numDiscard[1]);
+    if (MYDEBUG)
+        printf("Num discard for player 1 is: %d\nNum discard for player 2 is: %d\n", numDiscard[0], numDiscard[1]);
 
-    // make sure that state.discard[player][loop_i] equals the estate card
+    for (y = 0; y < numPlayers; y++)
+    {
+        for (z = 0; z < numDiscard[y]; z++)
+        {
+            assert(state.discard[y][z] == estate);
+        }
+    }
 
     printf("All tests passed!\n");
 }
