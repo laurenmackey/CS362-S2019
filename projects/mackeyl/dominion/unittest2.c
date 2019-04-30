@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include "rngs.h"
 
-#define MYDEBUG 0
+#define NOISY 1
 
 // check all properties of the previous state against all properties of the current state
 int checkStates(struct gameState prevState, struct gameState state)
@@ -24,33 +24,38 @@ int checkStates(struct gameState prevState, struct gameState state)
     int supplyCards[4] = {curse, estate, duchy, province};
 
     assert(prevState.numPlayers == state.numPlayers);
-    printf("Number of players is the same.\n");
+    if (NOISY)
+        printf("Number of players is the same.\n");
 
     for (k = 0; k < 4; k++)
     {
         assert(prevState.supplyCount[supplyCards[k]] == state.supplyCount[supplyCards[k]]);
         assert(prevState.embargoTokens[k] == state.embargoTokens[k]);
     }
-    printf("Supply cards are the same.\n");
-    printf("Embargo tokens are the same.\n");
+
+    if (NOISY)
+        printf("Supply cards are the same.\n");
+        printf("Embargo tokens are the same.\n");
     
+    assert(prevState.outpostPlayed == state.outpostPlayed);
+    if (NOISY)
+        printf("Outpost played is the same.\n");
+
     assert(prevState.outpostTurn == state.outpostTurn);
-    printf("Outpost turn is the same.\n");
+    if (NOISY)
+        printf("Outpost turn is the same.\n");
 
     assert(prevState.whoseTurn == state.whoseTurn);
-    printf("Whose turn is the same.\n");
+    if (NOISY)
+        printf("Whose turn is the same.\n");
 
     assert(prevState.phase == state.phase);
-    printf("Phase is the same.\n");
+    if (NOISY)
+        printf("Phase is the same.\n");
 
     assert(prevState.numActions == state.numActions);
-    printf("Num actions are the same.\n");
-
-    assert(prevState.coins == state.coins);
-    printf("Coin numbers are the same.\n");
-
-    assert(prevState.numBuys == state.numBuys);
-    printf("Num buys are the same.\n\n");
+    if (NOISY)
+        printf("Num actions are the same.\n");
 
     return 0;
 }
@@ -62,13 +67,8 @@ int main()
     int numPlayers = 2;
     int cards[10] = {adventurer, outpost, salvager, village, minion, mine, cutpurse,
            sea_hag, estate, smithy};
-    int treasureCards[3] = {copper, silver, gold};
     struct gameState state, prevState;
-    int deckSize = 10;
-    int handSize = 5;
-    int i, j;
-    int playedCard[2] = {0, 0};
-    int handPos = 0;
+    int i;
 
     // initialize the game
     memset(&state, 23, sizeof(struct gameState));
@@ -80,11 +80,11 @@ int main()
     memcpy(&prevState, &state, sizeof(struct gameState));
 
     // play the Outpost card for both players
-    for (j = 0; j < numPlayers; j++) 
+    for (i = 0; i < numPlayers; i++) 
     {
-        playOutpost(&state, j, 0);
+        playOutpost(&state, i, 0);
         // if first player, after play, outpostPlayed should only have incremented by 1
-        if (j == 0)
+        if (i == 0)
         {
             printf("Test 1: +1 outpostPlayed after player 1 plays card\n");
             printf("Expected state.outpostPlayed: %d, Actual state.outpostPlayed: %d\n\n", prevState.outpostPlayed + 1, state.outpostPlayed);
