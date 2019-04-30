@@ -2,64 +2,35 @@
 * Unit test for the playSalvager refactored function in dominion.c
 * Sources: assignment 3 assistance (2) code, cardtest4.c provided code
 * To run, makefile should include:
-* playSalvagerTest: unittest3.c dominion.o rngs.o
-*     gcc -o playSalvagerTest -g unittest3.c dominion.o rngs.o $(CFLAGS)
-* (where CFLAGS must equal -fprofile-arcs -ftest-coverage)
+* testPlaySalvager: unittest3.c dominion.o rngs.o
+*     gcc -o testPlaySalvager -g unittest3.c dominion.o rngs.o $(CFLAGS)
 ***********************************************************************************/
 
 #include "dominion.h"
 #include "dominion_helpers.h"
 #include <string.h>
 #include <stdio.h>
-#include <assert.h>
 #include <stdlib.h>
 #include "rngs.h"
 
-#define NOISY 0
-
 // check all properties of the previous state against all properties of the current state
-int checkStates(struct gameState prevState, struct gameState state)
+int statesSame(struct gameState prevState, struct gameState state)
 {
     int k; 
     int supplyCards[4] = {curse, estate, duchy, province};
+    int statePass = 1;
 
-    assert(prevState.numPlayers == state.numPlayers);
-    if (NOISY)
-        printf("Number of players is the same.\n");
+    if ((prevState.numPlayers != state.numPlayers) || (prevState.outpostTurn != state.outpostTurn) || (prevState.outpostPlayed != state.outpostPlayed) ||
+        (prevState.whoseTurn != state.whoseTurn) || (prevState.phase != state.phase) || (prevState.numActions != state.numActions))
+        statePass = 0;
 
     for (k = 0; k < 4; k++)
     {
-        assert(prevState.supplyCount[supplyCards[k]] == state.supplyCount[supplyCards[k]]);
-        assert(prevState.embargoTokens[k] == state.embargoTokens[k]);
+        if ((prevState.supplyCount[supplyCards[k]] != state.supplyCount[supplyCards[k]]) || (prevState.embargoTokens[k] == state.embargoTokens[k]))
+            statePass = 0;
     }
 
-    if (NOISY)
-    {
-        printf("Supply cards are the same.\n");
-        printf("Embargo tokens are the same.\n");
-    }
-    
-    assert(prevState.outpostPlayed == state.outpostPlayed);
-    if (NOISY)
-        printf("Outpost played is the same.\n");
-
-    assert(prevState.outpostTurn == state.outpostTurn);
-    if (NOISY)
-        printf("Outpost turn is the same.\n");
-
-    assert(prevState.whoseTurn == state.whoseTurn);
-    if (NOISY)
-        printf("Whose turn is the same.\n");
-
-    assert(prevState.phase == state.phase);
-    if (NOISY)
-        printf("Phase is the same.\n");
-
-    assert(prevState.numActions == state.numActions);
-    if (NOISY)
-        printf("Num actions are the same.\n");
-
-    return 0;
+    return statePass;
 }
 
 int main()
@@ -75,7 +46,7 @@ int main()
     int i;
     int card;
     int cardCost;
-    int test1Pass, test2Pass, test3Pass, test4Pass, test5Pass, test6Pass = 0;
+    int test1Pass = 0, test2Pass = 0, test3Pass = 0, test4Pass = 0, test5Pass = 0, test6Pass = 0;
 
     srand(seed);
 

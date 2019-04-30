@@ -2,16 +2,14 @@
 * Unit test for the playAdventurer refactored function in dominion.c
 * Sources: assignment 3 assistance (2) code, cardtest4.c provided code
 * To run, makefile should include:
-* playAdventurerTest: unittest1.c dominion.o rngs.o
-*     gcc -o playAdventurerTest -g unittest1.c dominion.o rngs.o $(CFLAGS)
-* (where CFLAGS must equal -fprofile-arcs -ftest-coverage)
+* testPlayAdventurer: unittest1.c dominion.o rngs.o
+*     gcc -o testPlayAdventurer -g unittest1.c dominion.o rngs.o $(CFLAGS)
 ***********************************************************************************/
 
 #include "dominion.h"
 #include "dominion_helpers.h"
 #include <string.h>
 #include <stdio.h>
-#include <assert.h>
 #include <stdlib.h>
 #include "rngs.h"
 
@@ -32,6 +30,8 @@ int main()
     int numTreasurePre[2] = {0, 0};
     int numTreasurePost[2] = {0, 0};
     int numDiscard[2] = {0, 0};
+    int flag = 0;
+    int fails = 0;
 
     // initialize the game
     memset(&state, 23, sizeof(struct gameState));
@@ -146,17 +146,25 @@ int main()
     printf("Test 1: +2 cards in hand for each player\n");
     printf("Expected player 1 hand count: %d, Actual player 1 hand count: %d\n", numHandPre[0] + 2, state.handCount[0]);
     printf("Expected player 2 hand count: %d, Actual player 2 hand count: %d\n\n", numHandPre[1] + 2, state.handCount[1]);
-    assert(state.handCount[0] == numHandPre[0] + 2);
-    assert(state.handCount[1] == numHandPre[1] + 2);
-    printf("Test 1: PASS\n\n");
+    if ((state.handCount[0] == numHandPre[0] + 2) && (state.handCount[1] == numHandPre[1] + 2))
+        printf("Test 1: PASS\n\n");
+    else
+    {
+        printf("Test 1: FAIL\n\n");
+        fails++;
+    }
 
     // after play, hand should have +2 treasure cards
     printf("Test 2: +2 treasure cards in hand for each player\n");
     printf("Expected player 1 treasure count: %d, Actual player 1 treasure count: %d\n", numTreasurePre[0] + 2, numTreasurePost[0]);
     printf("Expected player 2 treasure count: %d, Actual player 2 treasure count: %d\n\n", numTreasurePre[1] + 2, numTreasurePost[1]);
-    assert(numTreasurePost[0] == numTreasurePre[0] + 2);
-    assert(numTreasurePost[1] == numTreasurePre[1] + 2);
-    printf("Test 2: PASS\n\n");
+    if ((numTreasurePost[0] == numTreasurePre[0] + 2) && (numTreasurePost[1] == numTreasurePre[1] + 2))
+        printf("Test 2: PASS\n\n");
+    else
+    {
+        printf("Test 2: FAIL\n\n");
+        fails++;
+    }
 
     // get number of cards that will need to be discarded for each player before play
     for (w = 0; w < numPlayers; w++)
@@ -181,12 +189,23 @@ int main()
     {
         for (z = 0; z < numDiscard[y]; z++)
         {
-            assert(state.discard[y][z] == estate);
+            if (state.discard[y][z] != estate)
+                flag = 1;
         }
     }
-    printf("Test 3: PASS\n\n");
 
-    printf("Adventurer Card Function: all tests passed!\n\n");
+    if (flag == 0)
+        printf("Test 3: PASS\n\n");
+    else
+    {
+        printf("Test 3: FAIL\n\n");
+        fails++;
+    }
+
+    if (fails == 0)
+        printf("Adventurer Card Function: All Tests Passed!\n\n");
+    else
+        printf("Adventurer Card Function: Failed %d Tests\n\n", fails);
 
     return 0;
 }

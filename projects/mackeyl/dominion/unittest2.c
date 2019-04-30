@@ -2,62 +2,35 @@
 * Unit test for the playOutpost refactored function in dominion.c
 * Sources: assignment 3 assistance (2) code, cardtest4.c provided code
 * To run, makefile should include:
-* playOutpostTest: unittest2.c dominion.o rngs.o
-*     gcc -o playOutpostTest -g unittest2.c dominion.o rngs.o $(CFLAGS)
-* (where CFLAGS must equal -fprofile-arcs -ftest-coverage)
+* testPlayOutpost: unittest2.c dominion.o rngs.o
+*     gcc -o testPlayOutpost -g unittest2.c dominion.o rngs.o $(CFLAGS)
 ***********************************************************************************/
 
 #include "dominion.h"
 #include "dominion_helpers.h"
 #include <string.h>
 #include <stdio.h>
-#include <assert.h>
 #include <stdlib.h>
 #include "rngs.h"
 
-#define NOISY 1
-
 // check all properties of the previous state against all properties of the current state
-int checkStates(struct gameState prevState, struct gameState state)
+int statesSame(struct gameState prevState, struct gameState state)
 {
     int k; 
     int supplyCards[4] = {curse, estate, duchy, province};
+    int statePass = 1;
 
-    assert(prevState.numPlayers == state.numPlayers);
-    if (NOISY)
-        printf("Number of players is the same.\n");
+    if ((prevState.numPlayers != state.numPlayers) || (prevState.outpostTurn != state.outpostTurn) || (prevState.whoseTurn != state.whoseTurn) ||
+        (prevState.phase != state.phase) || (prevState.numActions != state.numActions))
+        statePass = 0;
 
     for (k = 0; k < 4; k++)
     {
-        assert(prevState.supplyCount[supplyCards[k]] == state.supplyCount[supplyCards[k]]);
-        assert(prevState.embargoTokens[k] == state.embargoTokens[k]);
+        if ((prevState.supplyCount[supplyCards[k]] != state.supplyCount[supplyCards[k]]) || (prevState.embargoTokens[k] == state.embargoTokens[k]))
+            statePass = 0;
     }
 
-    if (NOISY)
-        printf("Supply cards are the same.\n");
-        printf("Embargo tokens are the same.\n");
-    
-    assert(prevState.outpostPlayed == state.outpostPlayed);
-    if (NOISY)
-        printf("Outpost played is the same.\n");
-
-    assert(prevState.outpostTurn == state.outpostTurn);
-    if (NOISY)
-        printf("Outpost turn is the same.\n");
-
-    assert(prevState.whoseTurn == state.whoseTurn);
-    if (NOISY)
-        printf("Whose turn is the same.\n");
-
-    assert(prevState.phase == state.phase);
-    if (NOISY)
-        printf("Phase is the same.\n");
-
-    assert(prevState.numActions == state.numActions);
-    if (NOISY)
-        printf("Num actions are the same.\n");
-
-    return 0;
+    return statePass;
 }
 
 int main()
@@ -69,6 +42,7 @@ int main()
            sea_hag, estate, smithy};
     struct gameState state, prevState;
     int i;
+    int fails = 0;
 
     // initialize the game
     memset(&state, 23, sizeof(struct gameState));
@@ -88,31 +62,53 @@ int main()
         {
             printf("Test 1: +1 outpostPlayed after player 1 plays card\n");
             printf("Expected state.outpostPlayed: %d, Actual state.outpostPlayed: %d\n\n", prevState.outpostPlayed + 1, state.outpostPlayed);
-            assert(state.outpostPlayed == prevState.outpostPlayed + 1);
-            printf("Test 1: PASS\n\n");
+            if (state.outpostPlayed == prevState.outpostPlayed + 1)
+                printf("Test 1: PASS\n\n");
+            else
+            {
+                printf("Test 1: FAIL\n\n");
+                fails++;
+            }
         }
     }
 
     // after play, outpostPlayed state should be increased by 1 for each player
     printf("Test 2: +2 outpostPlayed after both players play card\n");
     printf("Expected state.outpostPlayed: %d, Actual state.outpostPlayed: %d\n\n", prevState.outpostPlayed + numPlayers, state.outpostPlayed);
-    assert(state.outpostPlayed == prevState.outpostPlayed + numPlayers);
-    printf("Test 2: PASS\n\n");
+    if (state.outpostPlayed == prevState.outpostPlayed + numPlayers)
+        printf("Test 2: PASS\n\n");
+    else
+    {
+        printf("Test 2: FAIL\n\n");
+        fails++;
+    }
 
     // after play, no other properties of state should be adjusted
     printf("Test 3: State not otherwise adjusted\n");
-    checkStates(prevState, state);
-    printf("Test 3: PASS\n\n");
+    if (statesSame(prevState, state))
+        printf("Test 3: PASS\n\n");
+    else
+    {
+        printf("Test 3: FAIL\n\n");
+        fails++;
+    }
 
     // after play, each player should have one fewer card in hand
     printf("Test 4: -1 card in each player's hand after playing Outpost card\n");
     printf("Expected hand count for player 1: %d, Actual hand count for player 1: %d\n", prevState.handCount[0] - 1, state.handCount[0]);
     printf("Expected hand count for player 2: %d, Actual hand count for player 2: %d\n\n", prevState.handCount[1] - 1, state.handCount[1]);
-    assert(prevState.handCount[0] - 1 == state.handCount[0]);
-    assert(prevState.handCount[1] - 1 == state.handCount[1]);
-    printf("Test 4: PASS\n\n");
+    if ((prevState.handCount[0] - 1 == state.handCount[0]) && (prevState.handCount[1] - 1 == state.handCount[1]))
+        printf("Test 4: PASS\n\n");
+    else
+    {
+        printf("Test 4: FAIL\n\n");
+        fails++;
+    }
 
-    printf("Outpost Card Function: all tests passed!\n\n");
+    if (fails == 0)
+        printf("Outpost Card Function: All Tests Passed!\n\n");
+    else
+        printf("Outpost Card Function: Failed %d Tests\n\n", fails);
 
     return 0;
 }
