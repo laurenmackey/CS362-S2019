@@ -17,6 +17,44 @@
 
 #define MYDEBUG 0
 
+// check all properties of the previous state against all properties of the current state
+int checkStates(struct gameState prevState, struct gameState state)
+{
+    int k; 
+    int supplyCards[4] = {curse, estate, duchy, province};
+
+    assert(prevState.numPlayers == state.numPlayers);
+    printf("Number of players is the same.\n");
+
+    for (k = 0; k < 4; k++)
+    {
+        assert(prevState.supplyCount[supplyCards[k]] == state.supplyCount[supplyCards[k]]);
+        assert(prevState.embargoTokens[k] == state.embargoTokens[k]);
+    }
+    printf("Supply cards are the same.\n");
+    printf("Embargo tokens are the same.\n");
+    
+    assert(prevState.outpostTurn == state.outpostTurn);
+    printf("Outpost turn is the same.\n");
+
+    assert(prevState.whoseTurn == state.whoseTurn);
+    printf("Whose turn is the same.\n");
+
+    assert(prevState.phase == state.phase);
+    printf("Phase is the same.\n");
+
+    assert(prevState.numActions == state.numActions);
+    printf("Num actions are the same.\n");
+
+    assert(prevState.coins == state.coins);
+    printf("Coin numbers are the same.\n");
+
+    assert(prevState.numBuys == state.numBuys);
+    printf("Num buys are the same.\n\n");
+
+    return 0;
+}
+
 int main()
 {
     // declare variables
@@ -24,6 +62,7 @@ int main()
     int numPlayers = 2;
     int cards[10] = {adventurer, outpost, salvager, village, minion, mine, cutpurse,
            sea_hag, estate, smithy};
+    int treasureCards[3] = {copper, silver, gold};
     struct gameState state, prevState;
     int deckSize = 10;
     int handSize = 5;
@@ -37,70 +76,43 @@ int main()
 
     printf("\n*********** Testing Outpost Card Function ***********\n\n");
 
-    // tests: 
-    // no other properties of state should be adjusted, including victory card piles and kingdom card piles
-    // other player should not have state.outpostPlayed adjusted
-    // should have one fewer card in hand after playOutpost, and that card should be equal to whatever card was in handPos (let's say at 0)
-    // note: may have an issue with last one since player 2 doesn't have a hand yet
-
     // copy previous game state to check later
     memcpy(&prevState, &state, sizeof(struct gameState));
-
-    // get card type of player's card that will be used to test playOutpost
-    for (i = 0; i < numPlayers; i++)
-    {
-        playedCard[i] = state.hand[i][handPos];
-    }
 
     // play the Outpost card for both players
     for (j = 0; j < numPlayers; j++) 
     {
         playOutpost(&state, j, 0);
+        // if first player, after play, outpostPlayed should only have incremented by 1
+        if (j == 0)
+        {
+            printf("Test 1: +1 outpostPlayed after player 1 plays card\n");
+            printf("Expected state.outpostPlayed: %d, Actual state.outpostPlayed: %d\n\n", prevState.outpostPlayed + 1, state.outpostPlayed);
+            assert(state.outpostPlayed == prevState.outpostPlayed + 1);
+            printf("Test 1: PASS\n\n");
+        }
     }
 
     // after play, outpostPlayed state should be increased by 1 for each player
-    printf("Test 1: +1 outpostPlayed for each player\n");
+    printf("Test 2: +2 outpostPlayed after both players play card\n");
     printf("Expected state.outpostPlayed: %d, Actual state.outpostPlayed: %d\n\n", prevState.outpostPlayed + numPlayers, state.outpostPlayed);
     assert(state.outpostPlayed == prevState.outpostPlayed + numPlayers);
-    printf("Test 1: PASS\n\n");
+    printf("Test 2: PASS\n\n");
 
-    // // at end, hand should have +2 treasure cards
-    // printf("Test 2: +2 treasure cards in hand for each player\n");
-    // printf("Expected player 1 treasure count: %d, Actual player 1 treasure count: %d\n", numTreasurePre[0] + 2, numTreasurePost[0]);
-    // printf("Expected player 2 treasure count: %d, Actual player 2 treasure count: %d\n\n", numTreasurePre[1] + 2, numTreasurePost[1]);
-    // assert(numTreasurePost[0] == numTreasurePre[0] + 2);
-    // assert(numTreasurePost[1] == numTreasurePre[1] + 2);
-    // printf("Test 2: PASS\n\n");
+    // after play, no other properties of state should be adjusted
+    printf("Test 3: State not otherwise adjusted\n");
+    checkStates(prevState, state);
+    printf("Test 3: PASS\n\n");
 
-    // // get number of cards that will need to be discarded for each player before play
-    // for (w = 0; w < numPlayers; w++)
-    // {
-    //     int startPos = deckSize - state.handCount[w];
-    //     for (x = startPos; x > -1; x--)
-    //     {
-    //         if (state.deck[w][x] != copper && state.deck[w][x] != silver && state.deck[w][x] != gold)
-    //         {
-    //             numDiscard[w]++;
-    //         }
-            
-    //     }
-    // }
+    // after play, each player should have one fewer card in hand
+    printf("Test 4: -1 card in each player's hand after playing Outpost card\n");
+    printf("Expected hand count for player 1: %d, Actual hand count for player 1: %d\n", prevState.handCount[0] - 1, state.handCount[0]);
+    printf("Expected hand count for player 2: %d, Actual hand count for player 2: %d\n\n", prevState.handCount[1] - 1, state.handCount[1]);
+    assert(prevState.handCount[0] - 1 == state.handCount[0]);
+    assert(prevState.handCount[1] - 1 == state.handCount[1]);
+    printf("Test 4: PASS\n\n");
 
-    // if (MYDEBUG)
-    //     printf("Num discard for player 1 is: %d\nNum discard for player 2 is: %d\n", numDiscard[0], numDiscard[1]);
-
-    // // at end, anything before treasure cards should be in discard pile
-    // printf("Test 3: All cards in deck before treasure cards now in discard pile\n");
-    // for (y = 0; y < numPlayers; y++)
-    // {
-    //     for (z = 0; z < numDiscard[y]; z++)
-    //     {
-    //         assert(state.discard[y][z] == estate);
-    //     }
-    // }
-    // printf("Test 3: PASS\n\n");
-
-    // printf("Adventurer Card Function: all tests passed!\n\n");
+    printf("Outpost Card Function: all tests passed!\n\n");
 
     return 0;
 }
