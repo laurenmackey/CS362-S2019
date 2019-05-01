@@ -1,9 +1,9 @@
 /**********************************************************************************
-* Unit test for the playAdventurer refactored function in dominion.c
+* Unit test for the Adventurer card implementation in dominion.c
 * Sources: assignment 3 assistance (2) code, cardtest4.c provided code
 * To run, makefile should include:
-* testPlayAdventurer: unittest1.c dominion.o rngs.o
-*     gcc -o testPlayAdventurer -g unittest1.c dominion.o rngs.o $(CFLAGS)
+* testPlayAdventurerBoundary: cardtest1.c dominion.o rngs.o
+*     gcc -o testPlayAdventurerBoundary -g cardtest1.c dominion.o rngs.o $(CFLAGS)
 ***********************************************************************************/
 
 #include "dominion.h"
@@ -13,9 +13,9 @@
 #include <stdlib.h>
 #include "rngs.h"
 
-#define MYDEBUG 0
+#define MYDEBUG 1
 
-// positive unit test for playAdventurer function
+// boundary unit test for Adventurer card
 int main()
 {
     // declare variables
@@ -26,7 +26,7 @@ int main()
     struct gameState state;
     int deckSize = 10;
     int handSize = 5;
-    int i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
+    int i, j, k, l, m, n, o, p, q, s, t, u, v, w, x, y, z;
     int numHandPre[2] = {0, 0};
     int numTreasurePre[2] = {0, 0};
     int numTreasurePost[2] = {0, 0};
@@ -38,15 +38,15 @@ int main()
     memset(&state, 23, sizeof(struct gameState));
     initializeGame(numPlayers, cards, seed, &state);
 
-    printf("\n*********** Testing Adventurer Card Function ***********\n\n");
+    printf("\n*********** Testing Adventurer Card Function (Boundary) ***********\n\n");
 
-    // manually reset the deck to have 2 treasure only
+    // manually reset the deck to have 0 treasures (lower boundary)
     for (i = 0; i < numPlayers; i++)
     {
         state.deckCount[i] = 0;
         for (j = 0; j < deckSize - 8; j++)
         {
-            state.deck[i][j] = gold;
+            state.deck[i][j] = minion;
             state.deckCount[i]++;    
         }
         for (j = deckSize - 8; j < deckSize; j++)
@@ -110,10 +110,12 @@ int main()
         printf("\nPre treasure in hand for player 1 is: %d\nPre treasure in hand for player 2 is: %d\n", numTreasurePre[0], numTreasurePre[1]);
 
     // play the Adventurer card for both players
-    for (r = 0; r < numPlayers; r++) 
-    {
-        playAdventurer(&state, r);
-    }
+    // for (r = 0; r < numPlayers; r++) 
+    // {
+    //     cardEffect(adventurer, 0, 0, 0, &state, 0, 0);
+    //     state.whoseTurn = 1;
+    // }
+    cardEffect(adventurer, 0, 0, 0, &state, 0, 0);
 
     // print the hand contents
     if (MYDEBUG)
@@ -204,9 +206,9 @@ int main()
     }
 
     if (fails == 0)
-        printf("Adventurer Card Function: All Tests Passed!\n\n");
+        printf("Adventurer Card Function (Boundary): All Tests Passed!\n\n");
     else
-        printf("Adventurer Card Function: Failed %d Tests\n\n", fails);
+        printf("Adventurer Card Function (Boundary): Failed %d Tests\n\n", fails);
 
     return 0;
 }

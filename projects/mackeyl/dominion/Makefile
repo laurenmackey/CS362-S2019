@@ -43,9 +43,13 @@ runtests: testDrawCard
 
 unittestresults: testPlayAdventurer testPlayOutpost testPlaySalvager testPlayVillage
 	./testPlayAdventurer &> unittestresults.out
+	gcov dominion.c >> unittestresults.out
 	./testPlayOutpost >> unittestresults.out
+	gcov dominion.c >> unittestresults.out
 	./testPlaySalvager >> unittestresults.out
+	gcov dominion.c >> unittestresults.out
 	./testPlayVillage >> unittestresults.out
+	gcov dominion.c >> unittestresults.out
 
 player: player.c interface.o
 	gcc -o player player.c -g  dominion.o rngs.o interface.o $(CFLAGS)

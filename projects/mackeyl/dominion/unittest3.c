@@ -18,19 +18,19 @@ int statesSame(struct gameState prevState, struct gameState state)
 {
     int k; 
     int supplyCards[4] = {curse, estate, duchy, province};
-    int statePass = 1;
+    int statesSame = 1;
 
     if ((prevState.numPlayers != state.numPlayers) || (prevState.outpostTurn != state.outpostTurn) || (prevState.outpostPlayed != state.outpostPlayed) ||
         (prevState.whoseTurn != state.whoseTurn) || (prevState.phase != state.phase) || (prevState.numActions != state.numActions))
-        statePass = 0;
+        statesSame = 0;
 
     for (k = 0; k < 4; k++)
     {
-        if ((prevState.supplyCount[supplyCards[k]] != state.supplyCount[supplyCards[k]]) || (prevState.embargoTokens[k] == state.embargoTokens[k]))
-            statePass = 0;
+        if ((prevState.supplyCount[supplyCards[k]] != state.supplyCount[supplyCards[k]]) || (prevState.embargoTokens[k] != state.embargoTokens[k]))
+            statesSame = 0;
     }
 
-    return statePass;
+    return statesSame;
 }
 
 int main()
@@ -47,6 +47,7 @@ int main()
     int card;
     int cardCost;
     int test1Pass = 0, test2Pass = 0, test3Pass = 0, test4Pass = 0, test5Pass = 0, test6Pass = 0;
+    int fails = 0;
 
     srand(seed);
 
@@ -69,71 +70,95 @@ int main()
         playSalvager(&state, 0, handPos, card);   
         
         // numBuys should go up by 1
-        assert(state.numBuys == prevState.numBuys + 1);
         if (state.numBuys == prevState.numBuys + 1)
             test1Pass++;
 
         // coins should go up by cost of card played
-        assert(state.coins == prevState.coins + cardCost);
         if (state.coins == prevState.coins + cardCost)
             test2Pass++;
 
         // hand should be 2 fewer than before
-        assert(state.handCount[0] == prevState.handCount[0] - 2);
         if (state.handCount[0] == prevState.handCount[0] - 2)
             test3Pass++;
 
         // nothing else in the state should change besides what was already tested for
-        if (checkStates(prevState, state) == 0)
+        if (statesSame(prevState, state))
             test4Pass++;
 
         // hand should no longer have the chosen coin card
-        assert(state.hand[0][state.handCount[0] + 1] == -1);
         if (state.hand[0][state.handCount[0] + 1] == -1)
-        {
             test5Pass++;
-        }
 
         // hand should no longer have the handPos card
-        assert(state.hand[0][state.handCount[0]] == -1);
         if (state.hand[0][state.handCount[0]] == -1)
-        {
             test6Pass++;
-        }
     }
 
     // check that all tests passed
     printf("Test 1: +1 numBuys after player 1 plays card\n");
     printf("Expected pass number: %d, Actual pass number: %d\n", numTests, test1Pass);
-    assert(numTests == test1Pass);
-    printf("Test 1: PASS\n\n");
+    if (numTests == test1Pass)
+        printf("Test 1: PASS\n\n");
+    else
+    {
+        printf("Test 1: FAIL\n\n");
+        fails++;
+    }
 
     printf("Test 2: Coins increment by cost of chosen card\n");
     printf("Expected pass number: %d, Actual pass number: %d\n", numTests, test2Pass);
-    assert(numTests == test2Pass);
-    printf("Test 2: PASS\n\n");
+    if (numTests == test2Pass)
+        printf("Test 2: PASS\n\n");
+    else
+    {
+        printf("Test 2: FAIL\n\n");
+        fails++;
+    }
 
     printf("Test 3: -2 in hand after player 1 plays card\n");
     printf("Expected pass number: %d, Actual pass number: %d\n", numTests, test3Pass);
-    assert(numTests == test3Pass);
-    printf("Test 3: PASS\n\n");
+    if (numTests == test3Pass)
+        printf("Test 3: PASS\n\n");
+    else
+    {
+        printf("Test 3: FAIL\n\n");
+        fails++;
+    }
 
     printf("Test 4: State not otherwise adjusted\n");
     printf("Expected pass number: %d, Actual pass number: %d\n", numTests, test4Pass);
-    assert(numTests == test4Pass);
-    printf("Test 4: PASS\n\n");
+    if (numTests == test4Pass)
+        printf("Test 4: PASS\n\n");
+    else
+    {
+        printf("Test 4: FAIL\n\n");
+        fails++;
+    }
 
     printf("Test 5: Hand no longer has chosen coin card\n");
     printf("Expected pass number: %d, Actual pass number: %d\n", numTests, test5Pass);
-    assert(numTests == test5Pass);
-    printf("Test 5: PASS\n\n");
+    if (numTests == test5Pass)
+        printf("Test 5: PASS\n\n");
+    else
+    {
+        printf("Test 5: FAIL\n\n");
+        fails++;
+    }
 
     printf("Test 6: Hand no longer has played card\n");
     printf("Expected pass number: %d, Actual pass number: %d\n", numTests, test6Pass);
-    assert(numTests == test6Pass);
-    printf("Test 6: PASS\n\n");
+    if (numTests == test6Pass)
+        printf("Test 6: PASS\n\n");
+    else
+    {
+        printf("Test 6: FAIL\n\n");
+        fails++;
+    }
 
-    printf("Salvager Card Function: all tests passed!\n\n");
+    if (fails == 0)
+        printf("Salvager Card Function: All Tests Passed!\n\n");
+    else
+        printf("Salvager Card Function: Failed %d Tests\n\n", fails);
 
     return 0;
 }

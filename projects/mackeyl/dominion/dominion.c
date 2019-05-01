@@ -660,8 +660,8 @@ int playSmithy(struct gameState *state, int currentPlayer, int handPos)
 
 int playAdventurer(struct gameState *state, int currentPlayer)
 {
-  int drawntreasure = 1;
-  int temphand[MAX_HAND - 1];
+  int drawntreasure = 0;
+  int temphand[MAX_HAND];
   int z = 0;
   int cardDrawn;
 
@@ -671,8 +671,12 @@ int playAdventurer(struct gameState *state, int currentPlayer)
     }
     drawCard(currentPlayer, state);
     cardDrawn = state->hand[currentPlayer][state->handCount[currentPlayer]-1];//top card of hand is most recently drawn card.
+    printf("Drew card %d for player %d\n", cardDrawn, currentPlayer);
     if (cardDrawn == copper || cardDrawn == silver || cardDrawn == gold)
+    {
+      printf("Entered drawnTreasure if for player %d\n", currentPlayer);
       drawntreasure++;
+    }
     else{
       temphand[z]=cardDrawn;
       state->handCount[currentPlayer]--; //this should just remove the top card (the most recently drawn one).
@@ -683,6 +687,14 @@ int playAdventurer(struct gameState *state, int currentPlayer)
   while(z-1>=0){
     state->discard[currentPlayer][state->discardCount[currentPlayer]++]=temphand[z-1]; // discard all cards in play that have been drawn
     z=z-1;
+  }
+
+  printf("Hand count is: %d\n", state->handCount[currentPlayer]);
+  printf("Hand for player 1 within dominion.c is: ");
+  for (int aa = 0; aa < state->handCount[currentPlayer]; aa++)
+  {
+    printf("TEST!");
+    printf("%d ", state->hand[currentPlayer][aa]);
   }
   
   return 0;

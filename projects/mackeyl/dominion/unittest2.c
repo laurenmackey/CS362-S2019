@@ -18,19 +18,19 @@ int statesSame(struct gameState prevState, struct gameState state)
 {
     int k; 
     int supplyCards[4] = {curse, estate, duchy, province};
-    int statePass = 1;
+    int statesSame = 1;
 
     if ((prevState.numPlayers != state.numPlayers) || (prevState.outpostTurn != state.outpostTurn) || (prevState.whoseTurn != state.whoseTurn) ||
-        (prevState.phase != state.phase) || (prevState.numActions != state.numActions))
-        statePass = 0;
+        (prevState.phase != state.phase) || (prevState.numActions != state.numActions) || (prevState.coins != state.coins) || (prevState.numBuys != state.numBuys))
+        statesSame = 0;
 
     for (k = 0; k < 4; k++)
     {
-        if ((prevState.supplyCount[supplyCards[k]] != state.supplyCount[supplyCards[k]]) || (prevState.embargoTokens[k] == state.embargoTokens[k]))
-            statePass = 0;
+        if ((prevState.supplyCount[supplyCards[k]] != state.supplyCount[supplyCards[k]]) || (prevState.embargoTokens[k] != state.embargoTokens[k]))
+            statesSame = 0;
     }
 
-    return statePass;
+    return statesSame;
 }
 
 int main()
