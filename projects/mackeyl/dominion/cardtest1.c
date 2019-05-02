@@ -33,7 +33,7 @@ int main()
     memset(&state, 23, sizeof(struct gameState));
     initializeGame(numPlayers, cards, seed, &state);
 
-    printf("\n*********** Testing Adventurer Card Function (Boundary) ***********\n\n");
+    printf("\n*********** Testing Play Adventurer Card (Boundary) ***********\n\n");
 
     // get number of total cards in hand before play
     numHandPre[0] = state.handCount[0];

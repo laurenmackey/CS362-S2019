@@ -33,6 +33,18 @@ testPlaySalvager: unittest3.c dominion.o rngs.o
 testPlayVillage: unittest4.c dominion.o rngs.o
 	gcc -o testPlayVillage -g unittest4.c dominion.o rngs.o $(CFLAGS)
 
+testAdventurer: cardtest1.c dominion.o rngs.o
+	gcc -o testAdventurer -g cardtest1.c dominion.o rngs.o $(CFLAGS)
+
+testSmithy: cardtest2.c dominion.o rngs.o
+	gcc -o testSmithy -g cardtest2.c dominion.o rngs.o $(CFLAGS)
+
+testCouncilRoom: cardtest3.c dominion.o rngs.o
+	gcc -o testCouncilRoom -g cardtest3.c dominion.o rngs.o $(CFLAGS)
+
+testGreatHall: cardtest4.c dominion.o rngs.o
+	gcc -o testGreatHall -g cardtest4.c dominion.o rngs.o $(CFLAGS)
+
 interface.o: interface.h interface.c
 	gcc -c interface.c -g  $(CFLAGS)
 
@@ -41,7 +53,7 @@ runtests: testDrawCard
 	gcov dominion.c >> unittestresult.out
 	cat dominion.c.gcov >> unittestresult.out
 
-unittestresults: testPlayAdventurer testPlayOutpost testPlaySalvager testPlayVillage
+unittestresults: testPlayAdventurer testPlayOutpost testPlaySalvager testPlayVillage testAdventurer testSmithy testCouncilRoom testGreatHall
 	./testPlayAdventurer &> unittestresults.out
 	gcov dominion.c >> unittestresults.out
 	./testPlayOutpost >> unittestresults.out
@@ -50,11 +62,19 @@ unittestresults: testPlayAdventurer testPlayOutpost testPlaySalvager testPlayVil
 	gcov dominion.c >> unittestresults.out
 	./testPlayVillage >> unittestresults.out
 	gcov dominion.c >> unittestresults.out
+	./testAdventurer >> unittestresults.out
+	gcov dominion.c >> unittestresults.out
+	./testSmithy >> unittestresults.out
+	gcov dominion.c >> unittestresults.out
+	./testCouncilRoom >> unittestresults.out
+	gcov dominion.c >> unittestresults.out
+	./testGreatHall >> unittestresults.out
+	gcov dominion.c >> unittestresults.out
 
 player: player.c interface.o
 	gcc -o player player.c -g  dominion.o rngs.o interface.o $(CFLAGS)
 
-all: playdom player testPlayAdventurer testPlayOutpost testPlaySalvager testPlayVillage
+all: playdom player testPlayAdventurer testPlayOutpost testPlaySalvager testPlayVillage testAdventurer testSmithy testCouncilRoom testGreatHall
 
 clean:
-	rm -f *.o playdom.exe playdom player player.exe testPlayAdventurer testPlayOutpost testPlaySalvager testPlayVillage *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe
+	rm -f *.o playdom.exe playdom player player.exe testPlayAdventurer testPlayOutpost testPlaySalvager testPlayVillage testAdventurer testSmithy testCouncilRoom testGreatHall *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe
