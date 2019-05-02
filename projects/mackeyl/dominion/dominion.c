@@ -208,14 +208,12 @@ int shuffle(int player, struct gameState *state) {
 
   if (state->deckCount[player] < 1)
   {
-    printf("Returning -1\n");
     return -1;
   }
   qsort ((void*)(state->deck[player]), state->deckCount[player], sizeof(int), compare); 
   /* SORT CARDS IN DECK TO ENSURE DETERMINISM! */
 
   while (state->deckCount[player] > 0) {
-    printf("Entered this while loop\n");
     card = floor(Random() * state->deckCount[player]);
     newDeck[newDeckPos] = state->deck[player][card];
     newDeckPos++;
@@ -658,7 +656,7 @@ int playSmithy(struct gameState *state, int currentPlayer, int handPos)
   }
       
   //discard card from hand
-  //discardCard(handPos, currentPlayer, state, 0);
+  discardCard(handPos, currentPlayer, state, 0);
   return 0;
 }
 
@@ -670,16 +668,13 @@ int playAdventurer(struct gameState *state, int currentPlayer)
   int cardDrawn;
 
   while(drawntreasure<2){
-    printf("State->deckCount for player %d is: %d\n", currentPlayer, state->deckCount[currentPlayer]);
     if (state->deckCount[currentPlayer] <1){//if the deck is empty we need to shuffle discard and add to deck
       shuffle(currentPlayer, state);
     }
     drawCard(currentPlayer, state);
     cardDrawn = state->hand[currentPlayer][state->handCount[currentPlayer]-1];//top card of hand is most recently drawn card.
-    printf("Drew card %d for player %d\n", cardDrawn, currentPlayer);
     if (cardDrawn == copper || cardDrawn == silver || cardDrawn == gold)
     {
-      printf("Entered drawnTreasure if for player %d\n", currentPlayer);
       drawntreasure++;
     }
     else{
@@ -693,16 +688,6 @@ int playAdventurer(struct gameState *state, int currentPlayer)
     state->discard[currentPlayer][state->discardCount[currentPlayer]++]=temphand[z-1]; // discard all cards in play that have been drawn
     z=z-1;
   }
-
-  printf("Hand count is: %d\n", state->handCount[currentPlayer]);
-  printf("Hand for player %d within dominion.c is: \n", currentPlayer);
-  for (int aa = 0; aa < state->handCount[currentPlayer]; aa++)
-  {
-    printf("%d ", state->hand[currentPlayer][aa]);
-  }
-  printf("\n");
-
-  printf("About to return from playAdventurer\n");
   
   return 0;
 }
@@ -776,7 +761,6 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       //+4 Cards
       for (i = 0; i < 4; i++)
       {
-        printf("Went into drawcard\n");
         drawCard(currentPlayer, state);
       }
           

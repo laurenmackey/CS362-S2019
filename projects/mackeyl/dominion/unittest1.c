@@ -13,8 +13,6 @@
 #include <stdlib.h>
 #include "rngs.h"
 
-#define MYDEBUG 0
-
 // positive unit test for playAdventurer function
 int main()
 {
@@ -23,14 +21,13 @@ int main()
     int numPlayers = 2;
     int cards[10] = {adventurer, outpost, salvager, village, minion, mine, cutpurse,
            sea_hag, estate, smithy};
-    struct gameState state;
+    struct gameState state, prevState;
     int deckSize = 10;
     int handSize = 5;
-    int i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
+    int i, j, m, p, q, r, u, v, y;
     int numHandPre[2] = {0, 0};
     int numTreasurePre[2] = {0, 0};
     int numTreasurePost[2] = {0, 0};
-    int numDiscard[2] = {0, 0};
     int flag = 0;
     int fails = 0;
 
@@ -56,38 +53,11 @@ int main()
         }
     }
 
-    // print the deck contents for each player
-    if (MYDEBUG)
-    {
-        for (k = 0; k < numPlayers; k++)
-        {
-            printf("\nDeck for player %d is:\n", k);
-            for (l = 0; l < deckSize; l++)
-            {
-                printf("%d ", state.deck[k][l]);
-            }
-            printf("\n");
-        }
-    }
-
     // reset hand and then draw from new deck into hand for player 0
     state.handCount[0] = 0;
     for (m = 0; m < handSize; m++)
     {
         drawCard(0, &state);
-    }
-
-    // print the hand contents
-    if (MYDEBUG)
-    {
-        for (n = 0; n < numPlayers; n++) 
-        {
-            printf("\nHand for player %d is:\n", n);
-            for (o = 0; o < state.handCount[n]; o++)
-            {
-                printf("%d ", state.hand[n][o]);
-            } 
-        }
     }
 
     // get number of total cards in hand before play
@@ -106,26 +76,10 @@ int main()
         } 
     }
 
-    if (MYDEBUG)
-        printf("\nPre treasure in hand for player 1 is: %d\nPre treasure in hand for player 2 is: %d\n", numTreasurePre[0], numTreasurePre[1]);
-
     // play the Adventurer card for both players
     for (r = 0; r < numPlayers; r++) 
     {
         playAdventurer(&state, r);
-    }
-
-    // print the hand contents
-    if (MYDEBUG)
-    {
-        for (s = 0; s < numPlayers; s++) 
-        {
-            printf("\nHand for player %d is:\n", s);
-            for (t = 0; t < state.handCount[s]; t++)
-            {
-                printf("%d ", state.hand[s][t]);
-            } 
-        }
     }
 
     // get number of treasure cards in hand after play
@@ -139,9 +93,6 @@ int main()
             }
         } 
     }
-
-    if (MYDEBUG)
-        printf("\n\nPost treasure for player 1 is: %d\nPost treasure for player 2 is: %d\n\n", numTreasurePost[0], numTreasurePost[1]);
 
     // after play, hand should have increased by 2 cards overall
     printf("Test 1: +2 cards in hand for each player\n");
@@ -167,31 +118,38 @@ int main()
         fails++;
     }
 
-    // get number of cards that will need to be discarded for each player before play
-    for (w = 0; w < numPlayers; w++)
-    {
-        int startPos = deckSize - state.handCount[w];
-        for (x = startPos; x > -1; x--)
-        {
-            if (state.deck[w][x] != copper && state.deck[w][x] != silver && state.deck[w][x] != gold)
-            {
-                numDiscard[w]++;
-            }
-            
-        }
-    }
-
-    if (MYDEBUG)
-        printf("Num discard for player 1 is: %d\nNum discard for player 2 is: %d\n", numDiscard[0], numDiscard[1]);
-
     // after play, anything before treasure cards should be in discard pile
     printf("Test 3: All cards in deck before treasure cards now in discard pile\n");
+
+    // loop through to check what should be discarded for each player
     for (y = 0; y < numPlayers; y++)
     {
-        for (z = 0; z < numDiscard[y]; z++)
+        int deckPos = prevState.deckCount[y] - 1;
+        int drawnTreasure = 0;
+        int index = 0;
+        int expectedDiscards[5];
+
+        while (drawnTreasure < 2 && deckPos > 0)
         {
-            if (state.discard[y][z] != estate)
-                flag = 1;
+            int card = prevState.deck[y][deckPos];
+            if (card == copper || card == silver || card == gold)
+            {
+                drawnTreasure++;
+            }
+            else
+            {
+                expectedDiscards[index] = card;
+                index++;
+            }
+
+            deckPos--;
+        }
+        for (int z = 0; z < index; z++)
+        {
+            if (expectedDiscards[z] != state.discard[y][z])
+            {
+                flag++;
+            }
         }
     }
 
