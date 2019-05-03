@@ -66,10 +66,10 @@ int main()
     printf("Expected player 1 handCount: %d, Actual player 1 handCount: %d\n", prevState.handCount[0], state.handCount[0]);
     printf("Expected player 2 handCount: %d, Actual player 2 handCount: %d\n", prevState.handCount[1], state.handCount[1]);
     if ((prevState.handCount[0] == state.handCount[0]) && (prevState.handCount[1] == state.handCount[1]))
-        printf("Test 2: PASS\n\n");
+        printf("Test 1: PASS\n\n");
     else
     {
-        printf("Test 2: FAIL\n\n");   
+        printf("Test 1: FAIL\n\n");   
         fails++;
     }
 
