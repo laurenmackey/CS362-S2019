@@ -45,6 +45,9 @@ testCouncilRoom: cardtest3.c dominion.o rngs.o
 testGreatHall: cardtest4.c dominion.o rngs.o
 	gcc -o testGreatHall -g cardtest4.c dominion.o rngs.o $(CFLAGS)
 
+randomTestAdventurer: randomtestadventurer.c dominion.o rngs.o
+	gcc -o randomTestAdventurer -g randomtestadventurer.c dominion.o rngs.o $(CFLAGS)
+
 interface.o: interface.h interface.c
 	gcc -c interface.c -g  $(CFLAGS)
 
@@ -71,10 +74,13 @@ unittestresults: testPlayAdventurer testPlayOutpost testPlaySalvager testPlayVil
 	./testGreatHall >> unittestresults.out
 	gcov dominion.c >> unittestresults.out
 
+randomtestresults: randomTestAdventurer
+	./randomTestAdventurer
+
 player: player.c interface.o
 	gcc -o player player.c -g  dominion.o rngs.o interface.o $(CFLAGS)
 
-all: playdom player testPlayAdventurer testPlayOutpost testPlaySalvager testPlayVillage testAdventurer testSmithy testCouncilRoom testGreatHall
+all: playdom player testPlayAdventurer testPlayOutpost testPlaySalvager testPlayVillage testAdventurer testSmithy testCouncilRoom testGreatHall randomTestAdventurer
 
 clean:
 	rm -f *.o playdom.exe playdom player player.exe testPlayAdventurer testPlayOutpost testPlaySalvager testPlayVillage testAdventurer testSmithy testCouncilRoom testGreatHall *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe
