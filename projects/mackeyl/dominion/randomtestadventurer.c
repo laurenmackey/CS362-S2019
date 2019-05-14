@@ -76,7 +76,7 @@ int main()
         memset(&state, 23, sizeof(struct gameState));
         initializeGame(numPlayers, cards, seed, &state);
 
-        // randomize the number of treasure cards in deck for each player, between 0 and 10
+        // randomize the number of treasure cards in deck for each player
         for (int i = 0; i < numPlayers; i++)
         {
             int j;
