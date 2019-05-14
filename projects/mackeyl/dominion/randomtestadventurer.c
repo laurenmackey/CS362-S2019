@@ -76,7 +76,7 @@ int main()
         memset(&state, 23, sizeof(struct gameState));
         initializeGame(numPlayers, cards, seed, &state);
 
-        // randomize the number of treasure cards in deck for each player
+        // randomize the number of treasure cards in deck for each player, between 0 and 10
         for (int i = 0; i < numPlayers; i++)
         {
             int j;
@@ -116,6 +116,7 @@ int main()
         getNumCards(numPlayers, state, numHandPost);
         getNumTreasure(numPlayers, state, numTreasurePost);
 
+        // after play, hand should have increased by 2 cards overall for both players
         for (int s = 0; s < numPlayers; s++)
         {
             if (numHandPost[s] != numHandPre[s] + 2)
@@ -125,6 +126,7 @@ int main()
         if (flag1)
             fail1++;   
 
+        // after play, hand should have +2 treasure cards
         for (int t = 0; t < numPlayers; t++)
         {
             if (numTreasurePost[t] != numTreasurePre[t] + 2)
@@ -134,6 +136,7 @@ int main()
         if (flag2)
             fail2++;
 
+        // after play, anything before treasure cards should be in discard pile
         // loop through to check what should be discarded for each player
         for (int o = 0; o < numPlayers; o++)
         {
@@ -170,25 +173,22 @@ int main()
             fail3++;
     }
 
-    // after play, hand should have increased by 2 cards overall for both players
     printf("Test 1: +2 cards in hand for each player\n");
     printf("Test 1: FAILED %d TIMES\n", fail1);
     printf("Test 1: PASSED %d TIMES\n\n", counter - fail1); 
 
-    // after play, hand should have +2 treasure cards
     printf("Test 2: +2 treasure cards in hand for each player\n");
     printf("Test 2: FAILED %d TIMES\n", fail2);
     printf("Test 2: PASSED %d TIMES\n\n", counter - fail2);  
 
-    // after play, anything before treasure cards should be in discard pile
     printf("Test 3: All cards in deck before treasure cards now in discard pile\n");
     printf("Test 3: FAILED %d TIMES\n", fail3);
     printf("Test 3: PASSED %d TIMES\n\n", counter - fail3); 
 
-    if (flag1 == 0 && flag2 == 0 && flag3 == 0)
+    if (fail1 == 0 && fail2 == 0 && fail3 == 0)
         printf("Adventurer Card Function: All Tests Passed!\n\n");
     else
-        printf("Adventurer Card Function: Failed %d Tests\n\n", flag1 + flag2 + flag3);
+        printf("Adventurer Card Function: Failed %d Tests\n\n", fail1 + fail2 + fail3);
 
     free(numTreasurePre);
     free(numTreasurePost);
