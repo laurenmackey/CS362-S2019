@@ -83,4 +83,4 @@ player: player.c interface.o
 all: playdom player testPlayAdventurer testPlayOutpost testPlaySalvager testPlayVillage testAdventurer testSmithy testCouncilRoom testGreatHall randomTestAdventurer
 
 clean:
-	rm -f *.o playdom.exe playdom player player.exe testPlayAdventurer testPlayOutpost testPlaySalvager testPlayVillage testAdventurer testSmithy testCouncilRoom testGreatHall *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe
+	rm -f *.o playdom.exe playdom player player.exe testPlayAdventurer testPlayOutpost testPlaySalvager testPlayVillage testAdventurer testSmithy testCouncilRoom testGreatHall randomTestAdventurer *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe

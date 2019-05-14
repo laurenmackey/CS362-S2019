@@ -662,8 +662,8 @@ int playSmithy(struct gameState *state, int currentPlayer, int handPos)
 
 int playAdventurer(struct gameState *state, int currentPlayer)
 {
-  int drawntreasure = 0;
-  int temphand[MAX_HAND];
+  int drawntreasure = 1;
+  int temphand[MAX_HAND - 1];
   int z = 0;
   int cardDrawn;
 
