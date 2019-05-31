@@ -43,10 +43,10 @@ int badCards(struct gameState prevState, struct gameState state, int currentPlay
     {
         printf("Test 1: +4 -1 discard cards in player 1's hand, +1 card in player 2's hand after player 1 plays\n");
         printf("Expected player %d hand count: %d, Actual player %d hand count: %d\n", currentPlayer + 1, prevState.handCount[currentPlayer] + 3, currentPlayer + 1, state.handCount[currentPlayer]);
-        printf("Expected player %d hand count: %d, Actual player %d hand count: %d\n", currentPlayer + 2, prevState.handCount[currentPlayer + 1] + 1, currentPlayer + 2, state.handCount[currentPlayer + 1]);
+        printf("Expected player %d hand count: %d, Actual player %d hand count: %d\n", currentPlayer + 2, prevState.handCount[currentPlayer + 1], currentPlayer + 2, state.handCount[currentPlayer + 1]);
         if (state.handCount[currentPlayer] != prevState.handCount[currentPlayer] + 3)
             badCards = 1;
-        else if (state.handCount[currentPlayer + 1] != prevState.handCount[currentPlayer + 1] + 1)
+        else if (state.handCount[currentPlayer + 1] != prevState.handCount[currentPlayer + 1])
             badCards = 1;
     }
 
@@ -54,9 +54,9 @@ int badCards(struct gameState prevState, struct gameState state, int currentPlay
     else if (currentPlayer == 1)
     {
         printf("Test 2: +4 -1 discard cards in player 2's hand, +1 card in player 1's hand after player 2 plays\n");
-        printf("Expected player %d hand count: %d, Actual player %d hand count: %d\n", currentPlayer + 1, prevState.handCount[currentPlayer] + 4, currentPlayer + 1, state.handCount[currentPlayer]);
+        printf("Expected player %d hand count: %d, Actual player %d hand count: %d\n", currentPlayer + 1, prevState.handCount[currentPlayer] + 3, currentPlayer + 1, state.handCount[currentPlayer]);
         printf("Expected player %d hand count: %d, Actual player %d hand count: %d\n", currentPlayer, prevState.handCount[currentPlayer - 1] + 4, currentPlayer, state.handCount[currentPlayer - 1]);
-        if (state.handCount[currentPlayer] != prevState.handCount[currentPlayer] + 4)
+        if (state.handCount[currentPlayer] != prevState.handCount[currentPlayer] + 3)
             badCards = 1;
         else if (state.handCount[currentPlayer - 1] != prevState.handCount[currentPlayer - 1] + 4)
             badCards = 1;

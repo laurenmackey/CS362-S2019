@@ -79,7 +79,7 @@ int main()
     // play the Adventurer card for both players
     for (r = 0; r < numPlayers; r++) 
     {
-        playAdventurer(&state, r);
+        cardEffect(village, 0, 0, 0, &state, 0, 0);
     }
 
     // get number of treasure cards in hand after play

@@ -55,7 +55,7 @@ int main()
     for (r = 0; r < numPlayers; r++) 
     {
         cardEffect(adventurer, 0, 0, 0, &state, 0, 0);
-        state.whoseTurn = 1;
+        //state.whoseTurn = 1;
     }
 
     // get number of treasure cards in hand after play

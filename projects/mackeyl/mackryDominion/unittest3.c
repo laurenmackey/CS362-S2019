@@ -67,7 +67,7 @@ int main()
         // play the Salvager card for player 1, using a randomly assigned card for each iteration
         card = state.hand[0][cardPos];
         cardCost = getCost( handCard(card, &state) );
-        playSalvager(&state, 0, handPos, card);   
+        cardEffect(salvager, card, 0, 0, &state, handPos, 0);  
         
         // numBuys should go up by 1
         if (state.numBuys == prevState.numBuys + 1)

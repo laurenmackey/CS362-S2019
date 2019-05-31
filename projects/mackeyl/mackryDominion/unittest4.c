@@ -58,7 +58,7 @@ int main()
     // play the Village card for both players
     for (i = 0; i < numPlayers; i++) 
     {
-        playVillage(&state, i, 0);
+        cardEffect(village, 0, 0, 0, &state, 0, 0);
         // if first player, after play, numActions should only have incremented by 2
         if (i == 0)
         {
@@ -95,27 +95,15 @@ int main()
         fails++;
     }
 
-    // after play, each player should have drawn one card from deck
-    printf("Test 4: -1 card in each player's deck after playing Village card\n");
-    printf("Expected deck count for player 1: %d, Actual deck count for player 1: %d\n", prevState.deckCount[0] - 1, state.deckCount[0]);
-    printf("Expected deck count for player 2: %d, Actual deck count for player 2: %d\n", prevState.deckCount[1] - 1, state.deckCount[1]);
-    if ((prevState.deckCount[0] - 1 == state.deckCount[0]) && (prevState.deckCount[1] - 1 == state.deckCount[1]))
+    // after play, each player should have one fewer card in hand (including +1 card from drawing a card in playVillage)
+    printf("Test 4: -1 card in each player's hand after playing Village card (including drawn card)\n");
+    printf("Expected hand count for player 1: %d, Actual hand count for player 1: %d\n", prevState.handCount[0], state.handCount[0]);
+    printf("Expected hand count for player 2: %d, Actual hand count for player 2: %d\n\n", prevState.handCount[1], state.handCount[1]);
+    if ((prevState.handCount[0] == state.handCount[0]) && (prevState.handCount[1] == state.handCount[1]))
         printf("Test 4: PASS\n\n");
     else
     {
         printf("Test 4: FAIL\n\n");
-        fails++;
-    }
-
-    // after play, each player should have one fewer card in hand (including +1 card from drawing a card in playVillage)
-    printf("Test 5: -1 card in each player's hand after playing Village card (including drawn card)\n");
-    printf("Expected hand count for player 1: %d, Actual hand count for player 1: %d\n", prevState.handCount[0], state.handCount[0]);
-    printf("Expected hand count for player 2: %d, Actual hand count for player 2: %d\n\n", prevState.handCount[1], state.handCount[1]);
-    if ((prevState.handCount[0] == state.handCount[0]) && (prevState.handCount[1] == state.handCount[1]))
-        printf("Test 5: PASS\n\n");
-    else
-    {
-        printf("Test 5: FAIL\n\n");
         fails++;
     }
 

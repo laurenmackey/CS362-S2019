@@ -109,7 +109,7 @@ int main()
         for (int o = 0; o < numPlayers; o++) 
         {
             cardEffect(adventurer, 0, 0, 0, &state, 0, 0);
-            state.whoseTurn = o + 1;
+            //state.whoseTurn = o + 1;
         }
 
         // get number of total cards and treasure cards in hand after play

@@ -59,7 +59,7 @@ int main()
     for (i = 0; i < numPlayers; i++) 
     {
         cardEffect(smithy, 0, 0, 0, &state, handPos, 0);
-        state.whoseTurn = 1;
+        //state.whoseTurn = 1;
     }
 
     // hand count should have incremented by 2 (+3 - 1 discard) for each player

@@ -56,7 +56,7 @@ int main()
     // play the Outpost card for both players
     for (i = 0; i < numPlayers; i++) 
     {
-        playOutpost(&state, i, 0);
+        cardEffect(outpost, 0, 0, 0, &state, 0, 0);
         // if first player, after play, outpostPlayed should only have incremented by 1
         if (i == 0)
         {
