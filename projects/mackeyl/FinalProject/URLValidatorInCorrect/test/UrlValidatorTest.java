@@ -24,7 +24,7 @@ import junit.framework.TestCase;
  */
 public class UrlValidatorTest extends TestCase {
 
-   private final boolean printStatus = false;
+   private final boolean printStatus = true;
    private final boolean printIndex = false;//print index that indicates current scheme,host,port,path, query test were using.
 
    public UrlValidatorTest(String testName) {
@@ -124,6 +124,39 @@ protected void setUp() {
          System.out.println();
       }
    }
+   
+   
+   /**
+    * Create URLs to test and debug the isValid() function and the UrlValidator.java file
+    */
+   public void testIsValidProjectB() {
+	  UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
+	  assertEquals(1, 1); 
+
+	  //create pairs of valid, invalid URL components
+	  String[] schemePair = {"http://", "http/", "://"};
+	  String[] authorityPair = {"www.google.com", "256.256.256.256", "go.com"};
+	  String[] portPair = {":80", ":65a", ":65636"};
+	  String[] pathPair = {"/test1", "/..//file", "/$23"};
+	  boolean[] expectedResults = {true, false, false};
+
+	  //build URLs, first one is all correct, second one is all incorrect, third one is some correct some incorrect
+	  for (int i = 0; i < 3; i++) {
+	     StringBuilder testBuffer = new StringBuilder();
+	     testBuffer.append(schemePair[i]);
+	     testBuffer.append(authorityPair[i]);      
+	     testBuffer.append(portPair[i]);
+	     testBuffer.append(pathPair[i]);
+
+	     String url = testBuffer.toString();
+	     boolean result = urlVal.isValid(url);
+	     if (printStatus) {
+	    	 System.out.print("\nURL is: " + url);
+		     System.out.print("\nResult is: " + result);	 
+	     }
+	     assertEquals(url, expectedResults[i], result);
+	  }
+    }
 
    public void testValidator202() {
        String[] schemes = {"http","https"};
