@@ -24,7 +24,7 @@ import junit.framework.TestCase;
  */
 public class UrlValidatorTest extends TestCase {
 
-   private final boolean printStatus = true;
+   private final boolean printStatus = false;
    private final boolean printIndex = false;//print index that indicates current scheme,host,port,path, query test were using.
 
    public UrlValidatorTest(String testName) {
@@ -91,13 +91,16 @@ protected void setUp() {
       do {
           StringBuilder testBuffer = new StringBuilder();
          boolean expected = true;
+         
          for (int testPartsIndexIndex = 0; testPartsIndexIndex < testPartsIndex.length; ++testPartsIndexIndex) {
             int index = testPartsIndex[testPartsIndexIndex];
+            
             ResultPair[] part = (ResultPair[]) testObjects[testPartsIndexIndex];
             testBuffer.append(part[index].item);
             expected &= part[index].valid;
          }
          String url = testBuffer.toString();
+         
          boolean result = urlVal.isValid(url);
          assertEquals(url, expected, result);
          if (printStatus) {
@@ -142,11 +145,10 @@ protected void setUp() {
 		   for(int j=0; j<x; j++) {
 			   int y = 0;
 			   y = (int) (Math.random()*((122-97)+1))+97;
-			   
-			   
 			   char c = (char)y;
 			   test.append(c);
 		   }
+		   
 		   if(i%2 == 0) {
 			   test.append(".com");
 		   }
@@ -164,7 +166,6 @@ protected void setUp() {
 		   assertEquals(url, true, result);
 	   }
    }
-
    public void testValidator202() {
        String[] schemes = {"http","https"};
        UrlValidator urlValidator = new UrlValidator(schemes, UrlValidator.NO_FRAGMENTS);
@@ -374,13 +375,14 @@ protected void setUp() {
     static boolean incrementTestPartsIndex(int[] testPartsIndex, Object[] testParts) {
       boolean carry = true;  //add 1 to lowest order part.
       boolean maxIndex = true;
-      for (int testPartsIndexIndex = testPartsIndex.length - 1; testPartsIndexIndex >= 0; --testPartsIndexIndex) {
-         int index = testPartsIndex[testPartsIndexIndex];
+      for (int testPartsIndexIndex = testPartsIndex.length -1; testPartsIndexIndex >= 0; --testPartsIndexIndex) {
+          int index = testPartsIndex[testPartsIndexIndex];
          ResultPair[] part = (ResultPair[]) testParts[testPartsIndexIndex];
          maxIndex &= (index == (part.length - 1));
+         
          if (carry) {
             if (index < part.length - 1) {
-               index++;
+            	index++;
                testPartsIndex[testPartsIndexIndex] = index;
                carry = false;
             } else {
@@ -389,8 +391,7 @@ protected void setUp() {
             }
          }
       }
-
-
+      
       return (!maxIndex);
    }
 
@@ -641,4 +642,3 @@ protected void setUp() {
 
 
 }
-
