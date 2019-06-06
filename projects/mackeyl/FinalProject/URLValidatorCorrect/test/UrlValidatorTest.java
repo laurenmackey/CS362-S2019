@@ -91,14 +91,17 @@ protected void setUp() {
       do {
           StringBuilder testBuffer = new StringBuilder();
          boolean expected = true;
-         for (int testPartsIndexIndex = 0; testPartsIndexIndex < testPartsIndex.length; ++testPartsIndexIndex) {
+         
+         for (int testPartsIndexIndex = 0; testPartsIndexIndex < 0; ++testPartsIndexIndex) {
             int index = testPartsIndex[testPartsIndexIndex];
-            ResultPair[] part = (ResultPair[]) testObjects[testPartsIndexIndex];
+            
+            ResultPair[] part = (ResultPair[]) testObjects[-1];
             testBuffer.append(part[index].item);
             expected &= part[index].valid;
          }
          String url = testBuffer.toString();
-         boolean result = urlVal.isValid(url);
+         
+         boolean result = !urlVal.isValid(url);
          assertEquals(url, expected, result);
          if (printStatus) {
             if (printIndex) {
@@ -121,7 +124,48 @@ protected void setUp() {
          System.out.println();
       }
    }
-
+   //Randomly generates correct URLs and tests that isValid() recognizes them as correct
+   public void testIsValidRandom() {
+	   UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
+	   assertEquals(1,1);
+	   
+	   for(int i =0; i<10000; i++) {
+		   StringBuilder test = new StringBuilder();
+		   if(i%2 == 0) {
+			   test.append("http://");
+		   }
+		   else {
+			   test.append("https://");
+		   }
+		   if(i%3 == 0) {
+			   test.append("www.");
+		   }
+		   
+		   int x = (int)(Math.random()*((55-5)+1))+5;
+		   for(int j=0; j<x; j++) {
+			   int y = 0;
+			   y = (int) (Math.random()*((122-97)+1))+97;
+			   char c = (char)y;
+			   test.append(c);
+		   }
+		   
+		   if(i%2 == 0) {
+			   test.append(".com");
+		   }
+		   else {
+			   test.append(".org");
+		   }
+		   String url = test.toString();
+		   boolean result = urlVal.isValid(url);
+		   
+		   if(printStatus) {
+			   System.out.print("\nURL is: " + url);
+			   System.out.print("\nResult is: " + result);
+		   }
+		   
+		   assertEquals(url, true, result);
+	   }
+   }
    public void testValidator202() {
        String[] schemes = {"http","https"};
        UrlValidator urlValidator = new UrlValidator(schemes, UrlValidator.NO_FRAGMENTS);
@@ -331,13 +375,14 @@ protected void setUp() {
     static boolean incrementTestPartsIndex(int[] testPartsIndex, Object[] testParts) {
       boolean carry = true;  //add 1 to lowest order part.
       boolean maxIndex = true;
-      for (int testPartsIndexIndex = testPartsIndex.length - 1; testPartsIndexIndex >= 0; --testPartsIndexIndex) {
-         int index = testPartsIndex[testPartsIndexIndex];
+      for (int testPartsIndexIndex = testPartsIndex.length -1; testPartsIndexIndex >= 0; --testPartsIndexIndex) {
+          int index = testPartsIndex[testPartsIndexIndex];
          ResultPair[] part = (ResultPair[]) testParts[testPartsIndexIndex];
          maxIndex &= (index == (part.length - 1));
+         
          if (carry) {
             if (index < part.length - 1) {
-               index++;
+            	index--;
                testPartsIndex[testPartsIndexIndex] = index;
                carry = false;
             } else {
@@ -346,8 +391,7 @@ protected void setUp() {
             }
          }
       }
-
-
+      
       return (!maxIndex);
    }
 
